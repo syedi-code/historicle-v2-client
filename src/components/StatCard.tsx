@@ -85,16 +85,21 @@ const Label = styled.div`
   text-align: center;
 `;
 
+// Update the StatCardProps interface to include animation props
 interface StatCardProps {
   value: string | number;
   label: string;
   variants?: any;
+  initial?: string;
+  animate?: string;
 }
 
 const StatCard: React.FC<StatCardProps> = ({ 
   value, 
   label, 
-  variants
+  variants,
+  initial,
+  animate
 }) => {
   const width = useWindowWidth();
   const isMobile = width <= 600;
@@ -111,7 +116,11 @@ const StatCard: React.FC<StatCardProps> = ({
       {!isMobile && <PaintingImage src={imageSrc} alt="Painting" />}
       
       <WhiteOverlay>
-        <ContentContainer variants={variants}>
+        <ContentContainer 
+          variants={variants}
+          initial={initial}
+          animate={animate}
+        >
           <Value>{value}</Value>
           <Label>{label}</Label>
         </ContentContainer>

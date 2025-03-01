@@ -111,24 +111,15 @@ const SummaryOverlay = styled.div`
   }
 `;
 
-// Renamed HoverPill (formerly WhitePill) with b/w inversion on hover
-const HoverPill = styled.div`
+// Convert HoverPill to use Framer Motion
+const HoverPill = styled(motion.div)`
   background-color: white;
   border: 2px solid black;
   border-radius: 50px;
   padding: 10px 20px;
   display: inline-block;
   margin-bottom: 20px;
-  transition: background-color 0.3s ease, color 0.3s ease;
-
-  &:hover {
-    background-color: black;
-    color: white;
-  }
-
-  @media (max-width: 600px) {
-    padding: 6px 12px;
-  }
+  /* Remove the CSS transitions that might interfere with Framer Motion */
 `;
 
 // Nav text button with underline-on-hover (for "Next Round")
@@ -159,9 +150,11 @@ const Underline = styled(motion.div)`
   transform-origin: center;
 `;
 
-const ButtonWrapper = styled.div`
+// Convert ButtonWrapper to a motion component
+const ButtonWrapper = styled(motion.div)`
   text-align: center;
   margin-top: 20px;
+  cursor: pointer;
 
   @media (max-width: 600px) {
     margin-top: 12px;
@@ -198,14 +191,15 @@ const RoundSummary: React.FC<RoundSummaryProps> = ({
           />
         </SummaryOverlay>
       </SummaryWrapper>
-      <ButtonWrapper>
-        <HoverPill>
-          <NavTextButton
-            onClick={onNextRound}
-            whileHover={{ scale: 1.05 }}
-            whileTap={{ scale: 0.95 }}
-            variants={itemVariants}
-          >
+      <ButtonWrapper 
+        onClick={onNextRound}
+        whileTap={{ scale: 0.95 }}
+      >
+        <HoverPill
+          whileHover={{ backgroundColor: "black", color: "white" }}
+          transition={{ duration: 0.3 }}
+        >
+          <NavTextButton>
             {roundNumber === 3 ? 'RESULTS →' : 'NEXT ROUND →'}
             <Underline
               variants={{

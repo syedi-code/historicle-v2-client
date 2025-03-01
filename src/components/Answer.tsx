@@ -71,12 +71,23 @@ const ImageWrapper = styled(motion.div)`
   border-radius: 20px;
 `;
 
-const StyledImage = styled.img`
+// Add the styled component for image loading
+const ImageContainer = styled.div`
+  position: relative;
+  width: 100%;
+  height: 100%;
+  background-color: #f0f0f0; // Light gray placeholder background
+`;
+
+const StyledImage = styled(motion.img)`
   border-radius: 15px;
   width: 100%;
   height: 100%;
   object-fit: cover;
   display: block;
+  position: absolute;
+  top: 0;
+  left: 0;
 `;
 
 const OverlayAnswer = styled(motion.div)`
@@ -150,13 +161,20 @@ const Answer: React.FC<AnswerProps> = ({
   const [textHovered, setTextHovered] = useState(false); // for info text hover
   const [hovered, setHovered] = useState(false); // manual state for border hover
   const [isClicked, setIsClicked] = useState(false); // new state for click animation
+  const [imageLoaded, setImageLoaded] = useState(false);
 
   useEffect(() => {
-    setRandomImage(getRandomImage());
+    setImageLoaded(false); // Reset image loaded state
     setInfoClicked(false);
     setTextHovered(false);
     setHovered(false);
     setIsClicked(false); // Reset click state when answer changes
+    
+    // Use setTimeout to ensure we're in a new render cycle
+    // This helps avoid the flash of old content
+    setTimeout(() => {
+      setRandomImage(getRandomImage());
+    }, 0);
   }, [answerSubmittedKey]);
 
   // Handle click animation
@@ -192,7 +210,7 @@ const Answer: React.FC<AnswerProps> = ({
       onClick={handleContainerClick}
     >
       <ImageWrapper
-        key={answerSubmittedKey} // force remount on answer change
+        key={`wrapper-${answerSubmittedKey}`}
         variants={borderAnimationValues}
         initial="unselected"
         animate={isSelected ? 'selected' : hovered ? 'hover' : 'unselected'}
@@ -204,7 +222,20 @@ const Answer: React.FC<AnswerProps> = ({
         onHoverEnd={() => setHovered(false)}
         transition={{ duration: 0.1, ease: 'easeInOut' }}
       >
-        <StyledImage src={randomImage} alt="Painting" />
+        <ImageContainer>
+          <AnimatePresence mode="wait">
+            <StyledImage 
+              key={`img-${answerSubmittedKey}-${randomImage}`}
+              src={randomImage} 
+              alt="Painting"
+              onLoad={() => setImageLoaded(true)}
+              initial={{ opacity: 0 }}
+              animate={{ opacity: imageLoaded ? 1 : 0 }}
+              transition={{ duration: 0.2 }}
+            />
+          </AnimatePresence>
+        </ImageContainer>
+
         <OverlayAnswer
           variants={overlayAnimationValues}
           initial="initial"

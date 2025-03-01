@@ -1,7 +1,7 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import axios from 'axios';
 import styled, { createGlobalStyle, useTheme } from 'styled-components';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion'; // Make sure AnimatePresence is imported
 
 import DivCarousel from './components/PassageCarousel';
 import QuestionInterface from './components/AnswerInterface';
@@ -40,6 +40,19 @@ const CenteredContainer = styled.div`
 `;
 
 const API_URL = "https://roeb3wvgee.execute-api.us-west-2.amazonaws.com/prod/daily";
+
+// Add fade animation variants
+const fadeVariants = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1,
+    transition: { duration: 0.8, ease: "easeOut" }
+  },
+  exit: { 
+    opacity: 0,
+    transition: { duration: 0.5, ease: "easeIn" }
+  }
+};
 
 function App() {
   const theme = useTheme();
@@ -166,9 +179,19 @@ function App() {
     return (
       <>
         <GlobalStyle />
-        <CenteredContainer>
-          <LoadingSpinner />
-        </CenteredContainer>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key="loading"
+            variants={fadeVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            <CenteredContainer>
+              <LoadingSpinner />
+            </CenteredContainer>
+          </motion.div>
+        </AnimatePresence>
       </>
     );
   }
@@ -179,16 +202,25 @@ function App() {
       <>
         <GlobalStyle />
         <Background bgColor={bgColor} />
-        <div className="App">
-          <CenteredContainer>
-            <FinalSummary 
-              roundResults={roundResults}
-              timelineResults={timelineResults}
-              totalQuestions={9} // 3 rounds * 3 questions
-              finalScore={totalScore} // Pass the actual final score
-            />
-          </CenteredContainer>
-        </div>
+        <AnimatePresence mode="wait">
+          <motion.div
+            key="summary"
+            className="App"
+            variants={fadeVariants}
+            initial="hidden"
+            animate="visible"
+            exit="exit"
+          >
+            <CenteredContainer>
+              <FinalSummary 
+                roundResults={roundResults}
+                timelineResults={timelineResults}
+                totalQuestions={9} // 3 rounds * 3 questions
+                finalScore={totalScore} // Pass the actual final score
+              />
+            </CenteredContainer>
+          </motion.div>
+        </AnimatePresence>
       </>
     );
   }
@@ -203,51 +235,60 @@ function App() {
     <>
       <GlobalStyle />
       <Background bgColor={bgColor} />
-      <div className="App">
-        <CenteredContainer>
-          <ScoreDisplay score={totalScore} />
-          <PassageCarousel
-            dailyPassages={dailyPassages}
-            ribbonText={{
-              author: correctBook.Author,
-              title: correctBook.Title,
-              year: String(correctBook.YearWritten),
-            }}
-            triggerDeduction={triggerDeduction}
-            roundLabel={roundLabel}
-          />
-          {!roundCompleted ? (
-            <>
-              <QuestionInterface
-                roundIndex={currentRound}  // used to compute globalQuestionIndex inside QuestionInterface
-                dailyBook={correctBook}
-                wrongBooks={wrongBooks}
-                questionOrder={['author', 'title', 'year']}
-                onAnswerSubmit={handleAnswerSubmit}
-                onGameComplete={handleRoundComplete}
-                triggerDeduction={triggerDeduction}
-              />
-              {/* Render RoundTimeline below the QuestionInterface */}
-              <RoundTimeline 
-                results={timelineResults} 
-                genres={data.map(item => item.genre)}
-              />
-            </>
-          ) : (
-            <RoundSummary
-              roundNumber={currentRound + 1}  // Display human-friendly round number.
-              genre={genre}
-              correctAnswers={{
+      <AnimatePresence mode="wait">
+        <motion.div
+          key={`round-${currentRound}-${roundCompleted}`} // Using a composite key to trigger animations on state changes
+          className="App"
+          variants={fadeVariants}
+          initial="hidden"
+          animate="visible"
+          exit="exit"
+        >
+          <CenteredContainer>
+            <ScoreDisplay score={totalScore} />
+            <PassageCarousel
+              dailyPassages={dailyPassages}
+              ribbonText={{
                 author: correctBook.Author,
                 title: correctBook.Title,
                 year: String(correctBook.YearWritten),
               }}
-              userAnswers={roundUserAnswers}
-              onNextRound={goToNextRound}
+              triggerDeduction={triggerDeduction}
+              roundLabel={roundLabel}
             />
-          )}
-        </CenteredContainer>
-      </div>
+            {!roundCompleted ? (
+              <>
+                <QuestionInterface
+                  roundIndex={currentRound}  // used to compute globalQuestionIndex inside QuestionInterface
+                  dailyBook={correctBook}
+                  wrongBooks={wrongBooks}
+                  questionOrder={['author', 'title', 'year']}
+                  onAnswerSubmit={handleAnswerSubmit}
+                  onGameComplete={handleRoundComplete}
+                  triggerDeduction={triggerDeduction}
+                />
+                {/* Render RoundTimeline below the QuestionInterface */}
+                <RoundTimeline 
+                  results={timelineResults} 
+                  genres={data.map(item => item.genre)}
+                />
+              </>
+            ) : (
+              <RoundSummary
+                roundNumber={currentRound + 1}  // Display human-friendly round number.
+                genre={genre}
+                correctAnswers={{
+                  author: correctBook.Author,
+                  title: correctBook.Title,
+                  year: String(correctBook.YearWritten),
+                }}
+                userAnswers={roundUserAnswers}
+                onNextRound={goToNextRound}
+              />
+            )}
+          </CenteredContainer>
+        </motion.div>
+      </AnimatePresence>
     </>
   );
 }

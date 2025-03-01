@@ -6,7 +6,7 @@ import CountUp from 'react-countup';
 import { RoundResult } from '../types';
 import { DailyStats } from '../types';
 
-import ScoreDisplay from './ScoreDisplay';  // Import ScoreDisplay component
+import ScoreDisplay from './ScoreDisplay';
 import StatsGrid from './StatsGrid';
 import MostMissed from './FinalSummaryMostMissed';
 import GenreSection from './FinalSummaryRound';
@@ -101,6 +101,21 @@ const staggerContainer = {
       staggerChildren: 0.2,
       delayChildren: 0.3
     }
+  }
+};
+
+// Animation variants for children
+const childFadeIn = {
+  hidden: { opacity: 0, y: 20 },
+  visible: { 
+    opacity: 1, 
+    y: 0,
+    transition: { duration: 0.5, ease: "easeOut" }
+  },
+  exit: { 
+    opacity: 0,
+    y: -10,
+    transition: { duration: 0.3 }
   }
 };
 
@@ -206,7 +221,7 @@ const FinalSummary: React.FC<FinalSummaryProps> = ({
     return (
       <LoadingContainer>
         <LoadingSpinner />
-        <LoadingText>SUBMITTING</LoadingText>
+        <LoadingText>Submitting...</LoadingText>
       </LoadingContainer>
     );
   }
@@ -220,46 +235,48 @@ const FinalSummary: React.FC<FinalSummaryProps> = ({
   ];
 
   return (
-    <AnimatePresence mode="wait">
-      <SummaryContainer
-        key="summary"
+    <SummaryContainer
+      initial="hidden"
+      animate="visible"
+      exit="exit"
+      variants={fadeIn}
+    >
+      <WhitePill 
+        key="white-pill" 
+        variants={fadeIn}
         initial="hidden"
         animate="visible"
         exit="exit"
-        variants={fadeIn}
       >
+        <ScoreDisplay 
+          score={finalScore}
+          animate={false}
+          isFinalScore={true}
+        />
 
-        <WhitePill variants={fadeIn}>
-          <ScoreDisplay 
-            score={finalScore}
-            animate={false}
-            isFinalScore={true}
-          />
+        <motion.div variants={staggerContainer}>
+          <StatsGrid stats={statsData} />
 
-          <motion.div variants={staggerContainer}>
-            <StatsGrid stats={statsData} />
-
-            {dailyStats?.mostMissed && (
-              <MostMissed 
-                data={dailyStats.mostMissed} 
-                getQuestionTypeName={getQuestionTypeName} 
-              />
-            )}
-          </motion.div>
-        </WhitePill>
-
-        {/* Genre breakdown sections */}
-        {roundResults.map((round: RoundResult, index: number) => (
-          <FinalSummaryRound
-            key={round.genre}
-            round={round}
-            genreStat={dailyStats?.genreStats?.[round.genre]}
-            fadeInDelay={0.3 + index * 0.2}
-            roundNumber={index + 1} // Add this line to pass the 1-based round number
-          />
-        ))}
-      </SummaryContainer>
-    </AnimatePresence>
+          {dailyStats?.mostMissed && (
+            <MostMissed 
+              data={dailyStats.mostMissed} 
+              getQuestionTypeName={getQuestionTypeName} 
+            />
+          )}
+        </motion.div>
+      </WhitePill>
+          
+      {/* Genre breakdown sections */}
+      {roundResults.map((round: RoundResult, index: number) => (
+        <FinalSummaryRound
+          key={round.genre}
+          round={round}
+          genreStat={dailyStats?.genreStats?.[round.genre]}
+          fadeInDelay={0.3 + index * 0.2}
+          roundNumber={index + 1}
+        />
+      ))}
+    </SummaryContainer>
   );
 };
 

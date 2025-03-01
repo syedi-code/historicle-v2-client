@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
-import { motion } from 'framer-motion';
+import { motion, AnimatePresence } from 'framer-motion';
 import { MostMissed as MostMissedType } from '../types';
 import { getRandomImage } from '../theme';
 
@@ -15,8 +15,8 @@ const useWindowWidth = () => {
   return width;
 };
 
-// Improved CardWrapper with better sizing constraints
-const CardWrapper = styled.div`
+// Change to motion.div for animation
+const CardWrapper = styled(motion.div)`
   position: relative;
   display: flex;
   align-items: center;
@@ -37,8 +37,8 @@ const PaintingImage = styled.img`
   display: block;
 `;
 
-// Updated Container for better mobile display
-const Container = styled.div`
+// Change to motion.div for animation
+const Container = styled(motion.div)`
   position: absolute;
   width: 90%;
   display: flex;
@@ -59,6 +59,22 @@ const Container = styled.div`
     box-shadow: none;
   }
 `;
+
+// Animation variants
+const fadeIn = {
+  hidden: { opacity: 0 },
+  visible: { 
+    opacity: 1, 
+    transition: { 
+      duration: 0.6, 
+      ease: "easeOut" 
+    }
+  },
+  exit: { 
+    opacity: 0,
+    transition: { duration: 0.3 }
+  }
+};
 
 // More compact HeaderRow for mobile
 const HeaderRow = styled.div`
@@ -212,33 +228,43 @@ const FinalSummaryMostMissed: React.FC<FinalSummaryMostMissedProps> = ({ data, g
   }, []);
 
   return (
-    <CardWrapper>
-      {/* Only show painting on non-mobile */}
-      {!isMobile && <PaintingImage src={imageSrc} alt="Painting" />}
-      
-      <Container>
-        <HeaderRow>
-          <Title>Most Missed Question:</Title>
-          <RoundIndicator>Round {data.round}</RoundIndicator>
-          <QuestionType>{getQuestionTypeName(data.type)}</QuestionType>
-        </HeaderRow>
+    <AnimatePresence mode="wait">
+      <CardWrapper
+        key="most-missed-card"
+        initial="hidden"
+        animate="visible"
+        exit="exit"
+        variants={fadeIn}
+      >
+        {/* Only show painting on non-mobile */}
+        {!isMobile && <PaintingImage src={imageSrc} alt="Painting" />}
         
-        <AccuracyStat>
-          Only <AccuracyValue>{Math.round(data.accuracy)}%</AccuracyValue> of players answered correctly.
-        </AccuracyStat>
-        
-        {data.popularWrongAnswers?.length > 0 && (
-          <WrongList>
-            {data.popularWrongAnswers.map(([answer, count]: [string, number]) => (
-              <li key={answer}>
-                <AnswerPill>{answer}</AnswerPill>
-                <PlayerCount>{count} PLAYER{Number(count) !== 1 ? 'S' : ''}</PlayerCount>
-              </li>
-            ))}
-          </WrongList>
-        )}
-      </Container>
-    </CardWrapper>
+        <Container
+          variants={fadeIn}
+        >
+          <HeaderRow>
+            <Title>Most Missed Question:</Title>
+            <RoundIndicator>Round {data.round}</RoundIndicator>
+            <QuestionType>{getQuestionTypeName(data.type)}</QuestionType>
+          </HeaderRow>
+          
+          <AccuracyStat>
+            Only <AccuracyValue>{Math.round(data.accuracy)}%</AccuracyValue> of players answered correctly.
+          </AccuracyStat>
+          
+          {data.popularWrongAnswers?.length > 0 && (
+            <WrongList>
+              {data.popularWrongAnswers.map(([answer, count]: [string, number]) => (
+                <li key={answer}>
+                  <AnswerPill>{answer}</AnswerPill>
+                  <PlayerCount>{count} PLAYER{Number(count) !== 1 ? 'S' : ''}</PlayerCount>
+                </li>
+              ))}
+            </WrongList>
+          )}
+        </Container>
+      </CardWrapper>
+    </AnimatePresence>
   );
 };
 

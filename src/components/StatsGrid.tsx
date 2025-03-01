@@ -54,13 +54,19 @@ const Grid = styled.div`
   }
 `;
 
-const fadeIn = {
-  hidden: { opacity: 0 },
+// Create a staggered animation function that incorporates the delay
+const staggeredFadeIn = (index: number) => ({
+  hidden: { opacity: 0, y: 10 },
   visible: { 
-    opacity: 1,
-    transition: { duration: 0.6 }
+    opacity: 1, 
+    y: 0,
+    transition: { 
+      duration: 0.6,
+      delay: 0.3 + index * 0.2, // Base delay of 0.3s plus 0.2s per card
+      ease: "easeOut"
+    }
   }
-};
+});
 
 interface StatsGridProps {
   stats: {
@@ -77,7 +83,9 @@ const StatsGrid: React.FC<StatsGridProps> = ({ stats }) => {
           key={stat.label} 
           value={stat.value} 
           label={stat.label}
-          variants={fadeIn}
+          variants={staggeredFadeIn(index)}
+          initial="hidden"
+          animate="visible"
         />
       ))}
     </Grid>
