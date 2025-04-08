@@ -2,7 +2,7 @@ import React, { useEffect, useRef, useState } from 'react';
 import styled from 'styled-components';
 import { motion, useAnimation } from 'framer-motion';
 import CountUp from 'react-countup';
-import WhitePill from './WhitePill';
+import WhitePill from '../UI/WhitePill';
 
 interface ScoreDisplayProps {
   score: number;

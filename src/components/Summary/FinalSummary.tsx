@@ -3,14 +3,14 @@ import axios from 'axios';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
 import CountUp from 'react-countup';
-import { RoundResult } from '../types';
-import { DailyStats } from '../types';
+import { RoundResult } from '../../types';
+import { DailyStats } from '../../types';
 
-import ScoreDisplay from './ScoreDisplay';
-import StatsGrid from './StatsGrid';
+import ScoreDisplay from '../Stats/ScoreDisplay';
+import StatsGrid from '../Stats/StatsGrid';
 import MostMissed from './FinalSummaryMostMissed';
 import GenreSection from './FinalSummaryRound';
-import LoadingSpinner from './LoadingSpinner';
+import LoadingSpinner from '../UI/LoadingSpinner';
 import FinalSummaryRound from './FinalSummaryRound';
 
 // If not already defined in your types file

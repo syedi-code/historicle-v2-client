@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { getRandomImage } from '../theme';
+import { getRandomImage } from '../../theme';
 
 const useWindowWidth = () => {
   const [width, setWidth] = useState(window.innerWidth);

@@ -3,16 +3,16 @@ import axios from 'axios';
 import styled, { createGlobalStyle, useTheme } from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion'; // Make sure AnimatePresence is imported
 
-import DivCarousel from './components/PassageCarousel';
-import QuestionInterface from './components/AnswerInterface';
-import Background from './components/Background';
-import ScoreDisplay from './components/ScoreDisplay';
-import RoundTimeline from './components/RoundTimeline';
-import RoundSummary from './components/RoundSummary';
-import FinalSummary from './components/FinalSummary';
+// Updated import paths to match the new folder structure
+import PassageCarousel from './components/Passage/PassageCarousel';
+import QuestionInterface from './components/Answer/AnswerInterface';
+import Background from './components/UI/Background';
+import ScoreDisplay from './components/Stats/ScoreDisplay';
+import RoundTimeline from './components/Stats/RoundTimeline';
+import RoundSummary from './components/Summary/RoundSummary';
+import FinalSummary from './components/Summary/FinalSummary';
 import { DailyData, Book, UserAnswers, RoundResult } from './types';
-import PassageCarousel from './components/PassageCarousel';
-import LoadingSpinner from './components/LoadingSpinner';
+import LoadingSpinner from './components/UI/LoadingSpinner';
 
 const GlobalStyle = createGlobalStyle`
   html, body {

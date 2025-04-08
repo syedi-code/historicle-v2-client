@@ -1,8 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion, AnimatePresence } from 'framer-motion';
-import { MostMissed as MostMissedType } from '../types';
-import { getRandomImage } from '../theme';
+import { MostMissed as MostMissedType } from '../../types';
+import { getRandomImage } from '../../theme';
 
 // Hook to track window width for responsive design
 const useWindowWidth = () => {

@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { getRandomImage } from '../theme';
+import { getRandomImage } from '../../theme';
 
 // Hook to track window width for responsive design
 const useWindowWidth = () => {

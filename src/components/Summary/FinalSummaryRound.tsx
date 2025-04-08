@@ -1,9 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import styled from 'styled-components';
 import { motion } from 'framer-motion';
-import { GenreStat, RoundResult } from '../types';
-import { getRandomImage } from '../theme';
-import WhitePill from './WhitePill';
+import { GenreStat, RoundResult } from '../../types';
+import { getRandomImage } from '../../theme';
+import WhitePill from '../UI/WhitePill';
 
 // Hook to track window width for responsive design
 const useWindowWidth = () => {
